@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-void LoadData(FILE *fp, int nFriends, int **FriendsChosen, char ****songs);
+void LoadData(FILE *fp, int nFriends, int **nChoicesForFriends, char ****songs);
 int princ_molt(int cnt, int *sol, int* nChoicesForFriends, int pos, int numberOfFriends, char ***matSongs);
 
 
@@ -50,7 +50,7 @@ void LoadData(FILE *fp, int nFriends, int **nChoicesForFriends, char ****songs){
     }
 }
 
-int princ_molt(int cnt, int *sol, int* FriendsChosen, int pos, int numberOfFriends, char ***matSongs){
+int princ_molt(int cnt, int *sol, int* nChoicesForFriends, int pos, int numberOfFriends, char ***matSongs){
     int j;
     if(pos >= numberOfFriends){
         for(int i = 0; i < pos; i++){
@@ -59,9 +59,9 @@ int princ_molt(int cnt, int *sol, int* FriendsChosen, int pos, int numberOfFrien
         printf("\n");
         return cnt + 1;
     }
-    for(j = 0; j < FriendsChosen[pos]; j++){  //note that I'm iterating over each friend and there is no data structure other than the variable 'j'
+    for(j = 0; j < nChoicesForFriends[pos]; j++){  //note that I'm iterating over each friend and there is no data structure other than the variable 'j'
         sol[pos] = j;
-        cnt = princ_molt(cnt, sol, FriendsChosen, pos+1, numberOfFriends, matSongs);
+        cnt = princ_molt(cnt, sol, nChoicesForFriends, pos+1, numberOfFriends, matSongs);
     }
     return cnt;
 }
