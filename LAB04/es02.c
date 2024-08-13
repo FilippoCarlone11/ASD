@@ -41,6 +41,8 @@ int isITEMnotVoid(Item x);
 link FileINS(link head);
 void printONfile(link head);
 Item deleteFromCode(link head);
+link deleteBetweenDates(link h);
+Item valuesBetweenDates(link *h, date d1, date d2);
 
 
 int main(){
@@ -51,28 +53,47 @@ int main(){
     h = loadData(h, fp);
     /*for(x = h; x != NULL; x = x->next)
         printf("%s ", x->val.code);*/
-    printf("Le operazioni possibili sono le seguenti:\n"
-           "[0] Acquisizione ed inserimento in lista da tastiera\n"
-           "[1] Acquisizione ed inserimento in lista da file\n"
-           "[2] Ricerca per codice\n"
-           "[3] Uscita\n"
-           "Digitare la scelta: ");
-    scanf("%d", &scelta);
-    switch(scelta){
-        case 0:
-            h = PerifIns(h);
-            break;
-        case 1:
-            h = FileINS(h);
-            break;
-        case 2:
-            res = SearchList(h);
-            break;
-        default:
-            printf("valori non consentiti");
-    }
-    if(isITEMnotVoid(res))
-        printITEM(res);
+
+    do{
+        printf("Le operazioni possibili sono le seguenti:\n"
+               "[0] Acquisizione ed inserimento in lista da tastiera\n"
+               "[1] Acquisizione ed inserimento in lista da file\n"
+               "[2] Ricerca per codice\n"
+               "[3] Cancellazione nodo tramite codice\n"
+               "[4] Cancellazione tra date\n"
+               "[5] Stampa su file\n"
+               "[6] Uscita\n"
+               "Digitare la scelta: ");
+        scanf("%d", &scelta);
+        switch(scelta){
+            case 0:
+                h = PerifIns(h);
+                break;
+            case 1:
+                h = FileINS(h);
+                break;
+            case 2:
+                res = SearchList(h);
+                break;
+            case 3:
+                res = deleteFromCode(h);
+                break;
+            case 4:
+                deleteBetweenDates(h);
+                break;
+            case 5:
+                printONfile(h);
+                break;
+            case 6: exit(0);
+            default:
+                printf("valori non consentiti");
+        }
+
+        if(isITEMnotVoid(res))
+            printITEM(res);
+    }while(scelta != 6);
+
+
 
     fclose(fp);
 }
@@ -148,12 +169,13 @@ date W2Date(char *data){
 
 link PerifIns(link head){
     char frase[NCHAR*6], data[13];
-    Item *x = malloc(sizeof( Item));
+    //Item *x = malloc(sizeof( Item));
+    Item x;
     printf("Inserisci i dati nel seguente formato <codice> <nome> <cognome> <data_di_nascita> <via> <citta'> <cap>");
-    scanf("%s", frase);
-    sscanf(frase, "%s %s %s %s %s %s %d", x->code,  x->name, x->surname, data, x->address, x->city, &(x->CAP));
-    x->birthdate = W2Date(data);
-    return SortListIns(head, *x);
+    scanf("%s %s %s %s %[^ ] %[^ ] %d", x.code, x.name, x.surname, data, x.address, x.city, &(x.CAP));
+    //sscanf(frase, "%s %s %s %s %s %s %d", x.code,  x.name, x.surname, data, x.address, x.city, &(x.CAP));
+    x.birthdate = W2Date(data);
+    return SortListIns(head, x);
 }
 
 Item SearchList(link head){
@@ -168,7 +190,7 @@ Item SearchList(link head){
 }
 
 void printITEM(Item val){
-    printf("%s %s %s %d/%d/%d %s %s %d", val.code,  val.name, val.surname, val.birthdate.day, val.birthdate.month, val.birthdate.year, val.address, val.city, val.CAP);
+    printf("%s %s %s %d/%d/%d %s %s %d \n", val.code,  val.name, val.surname, val.birthdate.day, val.birthdate.month, val.birthdate.year, val.address, val.city, val.CAP);
 }
 Item ITEMsetVoid(){
     Item x;
@@ -201,31 +223,61 @@ void printONfile(link head){
     FILE *fp = fopen(filename, "w");
 
     for (x = head; x != NULL; x = x->next) {
-        Item val = head->val;
-        fprintf(fp, "%s %s %s %d/%d/%d %s %s %d", val.code, val.name, val.surname, val.birthdate.day,
+        Item val = x->val;
+        fprintf(fp, "%s %s %s %d/%d/%d %s %s %d \n", val.code, val.name, val.surname, val.birthdate.day,
                 val.birthdate.month, val.birthdate.year, val.address, val.city, val.CAP);
     }
     fclose(fp);
 }
 
 Item deleteFromCode(link head){
+    link t, p, x;
     Item i = ITEMsetVoid();
     char codice[6];
-    link x, p;
     printf("Inserisci il codice da cancellare: ");
-    scanf("%d", codice);
+    scanf("%s", codice);
 
-    for(x = head, p = NULL; x != NULL; p = x, x = x-> next){
+    for(x = head, p = NULL; x != NULL; p = x, x = x -> next){
         if(strcmp(x->val.code, codice) == 0){
-            i = x->val;
-            if( x == head)
-                head = x->next;
-            else
-                p->next = x-> next;
-
-            free(x);
-            return x->val;
+            t = x;
+            p->next = x->next;
+            i = t->val;
+            free(t);
+            break;
         }
-
     }
+    return i;
+}
+
+link deleteBetweenDates(link h){
+    date d1, d2;
+    char data1[13], data2[13];
+    printf("Inserire la prima data nel formato gg/mm/aa: ");
+    scanf("%s", data1);
+    printf("Inserire la seconda data nel formato gg/mm/aa: ");
+    scanf("%s", data2);
+    d1 = W2Date(data1); d2 = W2Date(data2);
+    Item i;
+    do{
+        i = valuesBetweenDates(&h, d1, d2);
+        if(isITEMnotVoid(i))
+            printITEM(i);
+    }while(isITEMnotVoid(i));
+
+
+}
+
+Item valuesBetweenDates(link *h, date d1, date d2){
+    link x, p, t;
+    Item i = ITEMsetVoid();
+    for(x = *h, p = NULL; x != NULL ; p = x, x = x->next){
+        if(KEYgreater(d1, KEYget(x->val)) && KEYgreater(KEYget(x->val), d2)){
+            t = x;
+            i = t->val;
+            p->next = x->next;
+            free(t);
+            break;
+        }
+    }
+    return i;
 }
