@@ -1,48 +1,56 @@
 #include <stdio.h>
 #include <stdlib.h>
-#define filename "easy_test_set.txt"
+#define filename "hard_test_set.txt"
 #define NTYPEMATERIALS 4
 
 int isCorrect(int* sol, int succ, int pos);
 void loadMaterials(FILE *fp, int **materials);
 
 int disp_rip(int pos, int k, int *sol, int *materials, int cnt, int *stop);
-int countZaffiri(int *sol, int k);
-int countRubini(int *sol, int k);
-int countTopazi(int *sol, int k);
-int countSmeraldi(int *sol, int k);
 int Speranza(int *materials, int candidato);
 
 int main(){
-    int nTest, sommaMateriali = 0, stop;
-    //int *materials = (int *)malloc(NTYPEMATERIALS *sizeof(int));
+    //VAR DECLARATION
+    int nTest, stop,sol[75];
+    int *sommaMateriali;
+
+    //FILE VAR DECLARATION
     FILE *fp = fopen(filename, "r");
     fscanf(fp, "%d", &nTest);
-    int* sol = (int*) malloc(70*sizeof(int));
-    int **materiali = (int**)malloc(nTest*sizeof(int*));
-    for(int j = 0; j < 70; j++) sol[j] = -1;
+
+    //DATA STRUCTURES FOR QUANTITY
+    int **materiali = (int**) malloc(nTest*sizeof(int*));
+    sommaMateriali = calloc(nTest,sizeof(int));
+    int *results = (int*)malloc(nTest*sizeof(int));
 
     for(int k = 0; k <nTest; k++){
-        materiali[k] =(int*) malloc(4*sizeof(int));
+        materiali[k] =(int*) malloc(NTYPEMATERIALS*sizeof(int));
         loadMaterials(fp, materiali +k);
+        for(int i = 0; i < NTYPEMATERIALS; i++)
+            sommaMateriali[k] += materiali[k][i];
     }
 
-    for(int k = 1; k <= nTest; k++){
+    for(int k = 0; k < nTest; k++){
+        printf("%d\n", k);
             stop = 0;
-            //printf( "TEST N.%d\n", k);
-            //loadMaterials(fp, &materials);
-            for(int i = 0; i <NTYPEMATERIALS; i++)
-                sommaMateriali += materiali[k-1][i];
-
-            for(int i = sommaMateriali; i > 1 && !stop; i--){
-                if(disp_rip(0, i, sol, materiali[k-1], 0, &stop)){
-                    //printf("Numero totale materiali utilizzati: %d\n", i);
-                    //printf("Zaffiri: %d/%d Rubini: %d/%d Topazi: %d/%d Smeraldi: %d/%d", countZaffiri(sol, i), materials[0], countRubini(sol, i), materials[1], countTopazi(sol, i), materials[2],countSmeraldi(sol, i), materials[3]);
-                    //for(int l = 0; l < i; l++) printf("%d ", sol[l]);
+            for(int i = sommaMateriali[k]; i > 1 && !stop; i--)
+                if(disp_rip(0, i, sol, materiali[k], 0, &stop)){
+                    results[k] = i;
+                    break;
                 }
-            }
     }
-    free(sol);
+
+    for(int i = 0; i < nTest;i++){
+        printf( "TEST N.%d\n", i+1);
+        printf("Numero totale materiali utilizzati: %d\n", results[i]);
+    }
+
+    //FREE
+    free(results);
+    free(sommaMateriali);
+    for(int i =0; i<nTest;i++)
+        free(materiali[i]);
+    free(materiali);
 }
 
 int isCorrect(int* sol, int succ, int pos){
@@ -84,21 +92,17 @@ int disp_rip(int pos, int k, int *sol, int *materials, int cnt, int *stop){
         return cnt+1;
     }
     for(int i = 0; i < NTYPEMATERIALS &&!(*stop); i++){
-        if(materials[i] > 0 && Speranza(materials, i)){
-            if(isCorrect(sol, i, pos)){
+        if(materials[i] > 0 && Speranza(materials, i) && isCorrect(sol, i, pos)){
                 sol[pos] = i;
                 --materials[i];
                 cnt = disp_rip(pos + 1, k, sol, materials, cnt, stop);
                 ++materials[i];
-            }
-
         }
     }
     return cnt;
 }
 
-int Speranza(int *materials, int candidato){
-
+int Speranza(int *materials, int candidato){  // This function is used for pruning. It returns 1 if the current choice has the potential to continue the chain.
     if(candidato == 0) {
         if (materials[0] > 0 || materials[1] > 0)
             return 1;
@@ -123,3 +127,9 @@ int Speranza(int *materials, int candidato){
         return 0;
 
 }
+
+//TEMPI
+//very very easy : istantaneo
+//very easy : istantaneo
+//easy : 15s
+//hard : >6min
