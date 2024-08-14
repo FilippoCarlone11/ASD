@@ -95,7 +95,8 @@ int disp_rip(int pos, int k, int *sol, int *materials, int cnt, int *stop){
         if(materials[i] > 0 && Speranza(materials, i) && isCorrect(sol, i, pos)){
                 sol[pos] = i;
                 --materials[i];
-                cnt = disp_rip(pos + 1, k, sol, materials, cnt, stop);
+                if(disp_rip(pos + 1, k, sol, materials, cnt, stop))
+                    return 1;
                 ++materials[i];
         }
     }
