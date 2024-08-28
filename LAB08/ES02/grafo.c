@@ -23,6 +23,7 @@ void insertE(Graph G, Edge e);
 void GRAPHstore(Graph G, char *filename);
 static void GRAPHedges(Graph G, Edge *a);
 static char *STsearchByIndex(ST s, int i);
+int isInList(link head, int index);
 
 static Graph GRAPHinit(int V){
     Graph G = malloc(sizeof *G);
@@ -90,12 +91,6 @@ static void STinsert(ST s, char* n1, char* nw1, int *nodes){
         s[(*nodes)].elab = strdup(n1); s[(*nodes)].network = strdup(nw1);
         (*nodes)++;
     }
-
-    /*for(i = 0; i < *nodes && (strcmp(s[i].elab, n1) != 0); i++);
-    if(i >= *nodes - 1) {
-        s[i].elab = strdup(n1); s[i].network = strdup(nw1);
-        (*nodes)++;
-    }*/
 }
 
 static int STsearch(ST s, char *elab, int n){
@@ -169,6 +164,30 @@ int subGRAPHmat(Graph G, char *v1, char *v2, char *v3){
     return 0;
 }
 
+int subGRAPHlist(Graph G, char *v1, char *v2, char *v3, link *list){
+    int a, b, c;
+    a = STsearch(G->tab, v1, G->V);
+    b = STsearch(G->tab, v2, G->V);
+    c = STsearch(G->tab, v3, G->V);
+    if(a < 0 || b < 0 || c < 0)
+        return 0;
+    if (isInList(list[a], b) && (isInList(list[a], c)|| isInList(list[b], c)))
+        return 1;
+    if(isInList(list[a], c) && (isInList(list[a], b) || isInList(list[c], b)) )
+        return 1;
+    if(isInList(list[b], c) && (isInList(list[b], a) || isInList(list[c], a)))
+        return 1;
+    return 0;
+}
+
+int isInList(link head, int index){
+    link x;
+    for(x = head; x != NULL; x = x->next)
+        if(x->index == index)
+            return 1;
+    return 0;
+}
+
 link newNode(int index, link next){
     link x = malloc(sizeof *x);
     x->index = index;
@@ -198,4 +217,5 @@ link * createLIST(Graph G){
             printf("%s ", STsearchByIndex(G->tab, x->index));
         printf("\n");
     }
+    return list;
 }

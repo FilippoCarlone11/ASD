@@ -27,6 +27,6 @@ void GRAPHstore(Graph G, char *filename);
 Graph Graphload(char *filename);
 int subGRAPHmat(Graph G, char *v1, char *v2, char *v3);
 link * createLIST(Graph G);
-
+int subGRAPHlist(Graph G, char *v1, char *v2, char *v3, link *list);
 
 #endif //ASD_GRAFO_H
