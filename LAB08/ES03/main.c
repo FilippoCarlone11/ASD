@@ -4,11 +4,8 @@
 int main(){
     int scelta;
     Titoli t;
-    t = titoliLOADwp();
-    operations(t);
-    //Titolistore(t);
 
-    /*do{
+    do{
         printf("Menu principale\n");
         printf("[0] Acquisizione da file\n"
                "[1] Ricerca titolo azionario\n"
@@ -17,12 +14,12 @@ int main(){
         scanf("%d", &scelta);
         switch(scelta){
             case 0:
-                t = titoliLOADwp();
+                t = TITOLIloadwp();
                 break;
             case 1:
                 operations(t);
         }
-    }while(scelta != 2);*/
+    }while(scelta != 2);
 
     TITOLIfree(t);
 }

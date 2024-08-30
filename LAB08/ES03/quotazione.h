@@ -9,12 +9,12 @@ typedef struct {
     int n;
 } quotazione;
 
-quotazione qSetNull();
-quotazione UpdateQT(quotazione old, quotazione new);
-quotazione newQ(time datetime, int value, int n);
-time getTime(quotazione q);
-void quotazioneStore(quotazione q);
-int getQValue(quotazione q);
+quotazione QTSetNull();
+quotazione updateQT(quotazione old, quotazione new);
+quotazione newQT(time datetime, int value, int n);
+time getTimeQT(quotazione q);
+void storeQT(quotazione q);
+int getValueQT(quotazione q);
 
 
 #endif //ASD_QUOTAZIONE_H

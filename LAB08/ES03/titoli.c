@@ -16,16 +16,18 @@ struct titoli{
     int nTitoli;
 };
 
-linktitolo newTitoloNode(title t, linktitolo next){
+static linktitolo newTitoloNode(title t, linktitolo next);
+static title searchTitle(Titoli t, char *code);
+static Titoli TITOLIinit();
+
+static linktitolo newTitoloNode(title t, linktitolo next){
     linktitolo x = malloc(sizeof *x);
     x->t = t;
     x->next = next;
     return x;
 }
 
-static title searchTitle(Titoli t, char *code);
-
-Titoli TITOLIinit(){
+static Titoli TITOLIinit(){
     Titoli t = malloc(sizeof *t);
     t->head = NULL;
     t->nTitoli = 0;
@@ -48,12 +50,12 @@ Titoli titoliLOAD(char *filename){
 
     for(int i = 0; i < nTitoli; i++){
         fscanf(fp, "%s %d", code, &nTransazioni);
-        title t = titleINIT(code);
+        title t = TITLEinit(code);
         collT->nTitoli++;
         for(int j = 0; j < nTransazioni; j++){
             fscanf(fp, "%d/%d/%d %d:%d %d %d", &y, &m, &d, &h, &min, &valore, &nPezzi);
-            quotazione q = newQ(setTime(y, m, d, h, min), valore*nPezzi, nPezzi);
-            insertQuotation(t, q);
+            quotazione q = newQT(setTime(y, m, d, h, min), valore*nPezzi, nPezzi);
+            TITLEinsertQT(t, q);
         }
         if(collT->head == NULL)
             collT->head = newTitoloNode(t, NULL);
@@ -64,10 +66,10 @@ Titoli titoliLOAD(char *filename){
     return collT;
 }
 
-void Titolistore(Titoli t){
+void TITOLIstore(Titoli t){
     linktitolo x;
     for(x = t->head; x != NULL; x = x->next){
-        titoloStore(x->t);
+        TITLEstore(x->t);
     }
 }
 
@@ -75,25 +77,24 @@ void TITOLIfree(Titoli t){
     linktitolo x, y;
     for(x = t->head; x != NULL; x = y){
         y = x->next;
-        TitoloFree(x->t);
+        TITLEfree(x->t);
         free(x);
     }
 
     free(t);
 }
 
-Titoli titoliLOADwp(){
+Titoli TITOLIloadwp(){
     char filename[MAXC];
-    /*printf("Inserire nome file:");
-    scanf("%s", filename);*/
-    strcpy(filename, "F1.txt");
+    printf("Inserire nome file:");
+    scanf("%s", filename);
     return titoliLOAD(filename);
 }
 
 static title searchTitle(Titoli t, char *code){
     linktitolo x;
     for(x = t->head; x != NULL; x = x->next)
-        if(strcmp(getTitleCode(x->t), code) == 0)
+        if(strcmp(getTITLEcode(x->t), code) == 0)
             return x->t;
     return NULL;
 }
@@ -127,11 +128,13 @@ void operations(Titoli t){
                 printf("Inserire la data nel seguente formato: yy/mm/gg:");
                 scanf("%d/%d/%d", &y, &m, &d);
                 t1 = setTime(y, m, d, 0, 0);
-                quotazioneStore(searchQTbyDateForTitle(x, t1));
+                storeQT(TITLESearchQTDate(x, t1));
                 break;
             case 1:
+                TITLEminQTdates(x);
                 break;
             case 2:
+                TITLEminQT(x);
                 break;
             case 3:
                 break;

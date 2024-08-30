@@ -4,8 +4,8 @@
 
 typedef struct titoli *Titoli;
 
-Titoli titoliLOADwp();
-void Titolistore(Titoli t);
+Titoli TITOLIloadwp();
+void TITOLIstore(Titoli t);
 void TITOLIfree(Titoli t);
 void operations(Titoli t);
 #endif //ASD_TITOLI_H

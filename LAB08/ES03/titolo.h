@@ -4,11 +4,13 @@
 
 typedef struct titolo *title;
 
-title titleINIT(char *name);
-void insertQuotation(title t, quotazione q);
-void titoloStore(title t);
-void TitoloFree(title t);
-char *getTitleCode(title t);
-quotazione searchQTbyDateForTitle(title t, time t1);
+title TITLEinit(char *name);
+void TITLEinsertQT(title t, quotazione q);
+void TITLEstore(title t);
+void TITLEfree(title t);
+char *getTITLEcode(title t);
+quotazione TITLESearchQTDate(title t, time t1);
+void TITLEminQTdates(title t);
+void TITLEminQT(title t);
 
 #endif //ASD_TITOLO_H

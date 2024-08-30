@@ -1,24 +1,26 @@
 #include "quotazione.h"
 #include <stdio.h>
 
-time getTime(quotazione q){
+static int isQTsetNull(quotazione q);
+
+time getTimeQT(quotazione q){
     return q.datetime;
 }
 
-quotazione qSetNull(){
+quotazione QTSetNull(){
     quotazione q;
     q.n = -1;
     q.value = -1;
     return q;
 }
 
-int isQsetNull(quotazione q){
+int isQTsetNull(quotazione q){
     if (q.n ==  -1 && q.value == -1)
         return 1;
     return 0;
 }
 
-quotazione newQ(time datetime, int value, int n){
+quotazione newQT(time datetime, int value, int n){
     quotazione  q;
     q.datetime = datetime;
     q.value = value;
@@ -26,14 +28,14 @@ quotazione newQ(time datetime, int value, int n){
     return q;
 }
 
-quotazione UpdateQT(quotazione old, quotazione new){
+quotazione updateQT(quotazione old, quotazione new){
     old.value += new.value;
     old.n += new.n;
     return old;
 }
 
-void quotazioneStore(quotazione q){
-    if(!isQsetNull(q)) {
+void storeQT(quotazione q){
+    if(!isQTsetNull(q)) {
         printf("Quotazione per il giorno: ");
         dateStore(q.datetime);
         printf("%d %d\n", q.value / q.n, q.n);
@@ -42,6 +44,6 @@ void quotazioneStore(quotazione q){
     }
 }
 
-int getQValue(quotazione q) {
+int getValueQT(quotazione q) {
     return q.value/q.n;
 }
